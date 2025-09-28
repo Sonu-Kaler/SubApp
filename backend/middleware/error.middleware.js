@@ -1,5 +1,5 @@
-const errorMiddleware=async(err,req,res)=>{
-    console.error(err);
+const errorMiddleware=async(err,req,res,next)=>{
+    console.error("Error middleware triggred:", err.message);
 
     // ✅ STRONGER VALIDATION: Check if we have proper Express objects
     if (!res || !req || typeof res.status !== 'function' || typeof req.method !== 'string') {
@@ -9,7 +9,12 @@ const errorMiddleware=async(err,req,res)=>{
             resType: typeof res,
             reqType: typeof req
         });
-        return; // Just exit if objects are invalid
+        return next(err); // Just exit if objects are invalid
+    }
+
+    if(typeof res === 'function'){
+        console.error("res is a function, not a response object - skipping error middleware");
+        return next(err)
     }
 
     let error = {...err,message:err.message}
