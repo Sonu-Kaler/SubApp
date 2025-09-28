@@ -1,6 +1,17 @@
 const errorMiddleware=async(err,req,res)=>{
     console.error(err);
 
+    // ✅ STRONGER VALIDATION: Check if we have proper Express objects
+    if (!res || !req || typeof res.status !== 'function' || typeof req.method !== 'string') {
+        console.error('Invalid request/response objects in error middleware:', {
+            hasRes: !!res,
+            hasReq: !!req,
+            resType: typeof res,
+            reqType: typeof req
+        });
+        return; // Just exit if objects are invalid
+    }
+
     let error = {...err,message:err.message}
 
     if(err.name==="CastError"){
@@ -21,13 +32,11 @@ const errorMiddleware=async(err,req,res)=>{
         error.statusCode=401
     }
 
-    if(res && typeof res.status === 'function'){
-        res.status(error.statusCode || 500).json({success:false, error:error.message || "Server Error"})
-    }
-    else{
-        console.error("Invalid response object in error middleware")
-    }
-
+    // Send error response
+    res.status(error.statusCode || 500).json({ 
+        success: false, 
+        error: error.message || "Server Error" 
+    });
 }
 
 export default errorMiddleware
