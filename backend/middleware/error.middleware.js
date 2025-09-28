@@ -21,7 +21,13 @@ const errorMiddleware=async(err,req,res)=>{
         error.statusCode=401
     }
 
-    res.status(error.statusCode || 500).json({success:false, error:error.message || "Server Error"})
+    if(res && typeof res.status === 'function'){
+        res.status(error.statusCode || 500).json({success:false, error:error.message || "Server Error"})
+    }
+    else{
+        console.error("Invalid response object in error middleware")
+    }
+
 }
 
 export default errorMiddleware
