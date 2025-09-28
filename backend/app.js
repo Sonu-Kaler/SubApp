@@ -11,10 +11,10 @@ import cors from "cors"
 const app = express();
 
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps) or from any origin temporarily
-        callback(null, true);
-    },
+    origin: [
+        "https://subapp-frontend.onrender.com",
+        "http://localhost:3000"
+    ],
     methods: ["GET", "PUT", "POST", "DELETE"],
     credentials: true
 }));
